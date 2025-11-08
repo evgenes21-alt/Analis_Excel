@@ -1,0 +1,32 @@
+[
+    {
+        "date": "02.12.2021",
+        "amount": 5510.8,
+        "category": "Каршеринг",
+        "description": "Ситидрайв"
+    },
+    {
+        "date": "03.12.2021",
+        "amount": 3499.0,
+        "category": "Электроника и техника",
+        "description": "DNS"
+    },
+    {
+        "date": "25.12.2021",
+        "amount": 3400.0,
+        "category": "Развлечения",
+        "description": "sevs.eduerp.ru"
+    },
+    {
+        "date": "28.12.2021",
+        "amount": 1840.0,
+        "category": "Дом и ремонт",
+        "description": "Галамарт"
+    },
+    {
+        "date": "29.12.2021",
+        "amount": 1411.4,
+        "category": "Ж/д билеты",
+        "description": "РЖД"
+    }
+]

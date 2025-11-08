@@ -1,0 +1,54 @@
+{
+    "greeting": "Доброе утро",
+    "cards": [
+        {
+            "last_digits": "4556",
+            "total_spent": 3775.7,
+            "cashback": 37.76
+        },
+        {
+            "last_digits": "5091",
+            "total_spent": 14622.26,
+            "cashback": 146.22
+        },
+        {
+            "last_digits": "7197",
+            "total_spent": 23805.25,
+            "cashback": 238.05
+        }
+    ],
+    "top_transactions": [
+        {
+            "date": "02.12.2021",
+            "amount": 5510.8,
+            "category": "Каршеринг",
+            "description": "Ситидрайв"
+        },
+        {
+            "date": "03.12.2021",
+            "amount": 3499.0,
+            "category": "Электроника и техника",
+            "description": "DNS"
+        },
+        {
+            "date": "25.12.2021",
+            "amount": 3400.0,
+            "category": "Развлечения",
+            "description": "sevs.eduerp.ru"
+        },
+        {
+            "date": "28.12.2021",
+            "amount": 1840.0,
+            "category": "Дом и ремонт",
+            "description": "Галамарт"
+        },
+        {
+            "date": "29.12.2021",
+            "amount": 1411.4,
+            "category": "Ж/д билеты",
+            "description": "РЖД"
+        }
+    ],
+    "currency_rates": [],
+    "stock_prices": []
+}
