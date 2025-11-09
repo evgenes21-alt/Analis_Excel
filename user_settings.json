@@ -1,0 +1,5 @@
+{
+  "currencies": ["USD", "EUR", "GBP"],
+  "stocks": ["AAPL", "GOOGL", "MSFT", "TSLA"]
+}
+

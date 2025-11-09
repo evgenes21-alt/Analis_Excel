@@ -49,6 +49,19 @@
             "description": "РЖД"
         }
     ],
-    "currency_rates": [],
+    "currency_rates": [
+        {
+            "currency": "USD",
+            "rate": 80.87
+        },
+        {
+            "currency": "EUR",
+            "rate": 93.56
+        },
+        {
+            "currency": "GBP",
+            "rate": 106.42
+        }
+    ],
     "stock_prices": []
 }
