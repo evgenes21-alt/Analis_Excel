@@ -20,29 +20,7 @@ services_logger.addHandler(file_handler)
 services_logger.setLevel(logging.INFO)
 
 
-# def search_phones(transactions: str, field_to_search: str, regex: str) -> str:
-#     """
-#     Функция получает данные с транзакциями и возвращает датафрейм,
-#     в котором в поле, заданном параметром 'field_to_search' имеются записи
-#     с телефонными номерами, заданным в шаблоне 'regex'.
-#     """
-#     phones_json = ''
-#     try:
-#         trans = pd.read_excel(transactions_path + transactions)
-#         pattern = re.compile(regex)
-#         phones = trans[trans[field_to_search].str.contains(pattern)].fillna(0)
-#
-#         # переводим датафрейм с найденными номерами телефонов
-#         # сначала в словарь, а затем в формат json
-#         phones_json = json.dumps(phones.to_dict(orient='records'), ensure_ascii=False, indent=4)
-#         services_logger.info("Успешная выборка, возвращен json с найденными номерами телефонов")
-#     except FileNotFoundError:
-#         services_logger.error("Ошибка открытия файла, возвращен пустой список")
-#
-#     return phones_json
-# from pathlib import Path
-# import pandas as pd
-# import re
+
 
 
 def search_phones(transactions_path: str | Path, field_name: str, pattern: str) -> str:

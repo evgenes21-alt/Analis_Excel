@@ -96,28 +96,7 @@ def filter_by_dates(transactions: pd.DataFrame, start_date: datetime, current_da
     return filtered_by_dates_OK_noNANs.to_dict(orient="records")
 
 
-# def read_currencies_and_stocks_from_json() -> tuple[list[str], list[str]]:
-#     """
-#     Функция считывает список валют и акций, по которым требуется
-#     запросить цены и текущий курс.
-#     Возвращает два списка, отдельно по валютам и акциям.
-#     """
-#
-#     currencies = []
-#     stocks = []
-#
-#     try:
-#         with open(BASE_DIR + r'\user_settings.json') as u_sets:
-#             sets = json.load(u_sets)
-#             currencies = sets.get('user_currencies', 0)
-#             stocks = sets.get('user_stocks', 0)
-#             utils_logger.info("Чтение файла user_settings.json успешно")
-#
-#     except JSONDecodeError:
-#         print("Ошибка чтения файла json")
-#         utils_logger.error("Ошибка чтения файла json")
-#
-#     return currencies, stocks
+
 BASE_DIR = Path(__file__).parent.parent
 def read_currencies_and_stocks_from_json():
     file_path = BASE_DIR / "user_settings.json"
