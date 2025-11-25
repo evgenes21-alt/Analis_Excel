@@ -3,7 +3,6 @@ import pandas as pd
 from src.reports import spending_by_category
 
 
-# ТЕСТ PASSED
 def test_spending_by_category(source_dataframe, expected_fastfood) -> None:
     """
     Тест на выборку из датафрейма, правильно подсчитывающий сумму расходов
@@ -16,7 +15,6 @@ def test_spending_by_category(source_dataframe, expected_fastfood) -> None:
         spending_by_category.__wrapped__(source_dataframe, 3, 'Фастфуд', date_input), expected_fastfood)
 
 
-# ТЕСТ PASSED
 def test_log_to_file(filtered_by_dates_df) -> None:
     """ Тест декоратора на правильный вывод файла. """
     expected_reports = {'Категория': 'Фастфуд', 'Траты за 3 месяца:': '353.0 руб.'}

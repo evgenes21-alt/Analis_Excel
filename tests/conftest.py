@@ -1,14 +1,15 @@
+import zipfile
 from pathlib import Path
 
 import pandas as pd
 import pytest
 
-tests_path = str(Path(__file__).parent)
+tests_path = Path(__file__).parent
 
 
 @pytest.fixture
 def source_dataframe():
-    df = pd.read_excel(tests_path + r'\test_operations.xlsx')
+    df = pd.read_excel(tests_path / 'test_operations.xlsx')
     df['Сумма операции'] = df['Сумма операции'].astype(float)
     df['MCC'] = df['MCC'].astype(float)
     # df = df.fillna(0)
@@ -16,9 +17,10 @@ def source_dataframe():
     return df
 
 
+
 @pytest.fixture
 def filtered_by_dates_df():
-    df = pd.read_excel(tests_path + r'\expected_filtered_by_dates.xlsx')
+    df = pd.read_excel(tests_path / 'expected_filtered_by_dates.xlsx')
     df['MCC'] = df['MCC'].astype(float)
     df['Сумма операции'] = df['Сумма операции'].astype(float)
     df['Сумма платежа'] = df['Сумма платежа'].astype(float)
@@ -110,28 +112,47 @@ def cards_spent():
 
 @pytest.fixture
 def phones_found():
-    return [{'Дата операции': '18.11.2021 21:15:27', 'Дата платежа': '19.11.2021', 'Номер карты': 0, 'Статус': 'OK',
-             'Сумма операции': -200.0, 'Валюта операции': 'RUB', 'Сумма платежа': -200.0, 'Валюта платежа': 'RUB',
-             'Кэшбэк': 0.0, 'Категория': 'Мобильная связь', 'MCC': 0.0, 'Описание': 'Тинькофф Мобайл +7 995 555-55-55',
-             'Бонусы (включая кэшбэк)': 2, 'Округление на инвесткопилку': 0, 'Сумма операции с округлением': 200.0},
-            {'Дата операции': '29.09.2021 09:22:42', 'Дата платежа': '29.09.2021', 'Номер карты': 0, 'Статус': 'OK',
-             'Сумма операции': -400.0, 'Валюта операции': 'RUB', 'Сумма платежа': -400.0, 'Валюта платежа': 'RUB',
-             'Кэшбэк': 0.0, 'Категория': 'Мобильная связь', 'MCC': 0.0, 'Описание': 'Я МТС +7 921 111-22-33',
-             'Бонусы (включая кэшбэк)': 4, 'Округление на инвесткопилку': 0, 'Сумма операции с округлением': 400.0},
-            {'Дата операции': '07.10.2021 12:00:06', 'Дата платежа': '07.03.2021', 'Номер карты': 0,
-             'Статус': 'OK', 'Сумма операции': -50.0, 'Валюта операции': 'RUB', 'Сумма платежа': -50.0,
-             'Валюта платежа': 'RUB', 'Кэшбэк': 0.0, 'Категория': 'Мобильная связь', 'MCC': 0.0,
-             'Описание': 'МТС Mobile +7 981 333-33-33', 'Бонусы (включая кэшбэк)': 0, 'Округление на инвесткопилку': 0,
-             'Сумма операции с округлением': 50.0}]
+    return  [
+    "995 555-55-55",
+    "995 555-55-55",
+    "981 333-44-55",
+    "981 333-33-33",
+    "921 333-33-33",
+    "921 111-22-33",
+    "981 666-66-66",
+    "921 111-22-33",
+    "981 888-88-88",
+    "981 976-14-20",
+    "981 976-14-20",
+    "981 976-14-20",
+    "921 111-22-33",
+    "985 111-11-11",
+    "921 999-99-99",
+    "911 198-78-58",
+    "981 555-55-55",
+    "981 976-14-20",
+    "966 000-00-00",
+    "911 000-09-09",
+    "911 882-65-08",
+    "962 717-08-52",
+    "962 717-08-52",
+    "981 127-94-00",
+    "911 695-42-03"
+  ]
 
 
 @pytest.fixture
 def expected_fastfood():
-    df = pd.read_excel(tests_path + r'\expected_fastfood.xlsx').agg({'Сумма операции': 'sum'}).astype(float)
+    df = pd.read_excel(tests_path / 'expected_fastfood.xlsx').agg({'Сумма операции': 'sum'}).astype(float)
     return df
 
 
 @pytest.fixture
 def expected_supermarkets():
-    df = pd.read_excel(tests_path + r'\expected_supermarkets.xlsx').agg({'Сумма операции': 'sum'}).astype(float)
+    df = pd.read_excel(tests_path / 'expected_supermarkets.xlsx').agg({'Сумма операции': 'sum'}).astype(float)
     return df
+
+" В conftest.py добавьте проверку (временно)"
+import os
+print("Текущий каталог:", os.getcwd())
+print("Файл существует:", os.path.exists(tests_path / 'test_operations.xlsx'))

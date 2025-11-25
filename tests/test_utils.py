@@ -32,7 +32,7 @@ def test_filter_by_dates(source_dataframe: pd.DataFrame, filtered_by_dates_df: p
 
 # ТЕСТ PASSED
 @patch('builtins.open', new_callable=mock_open,
-       read_data='{"user_currencies": ["USD", "EUR"], "user_stocks": ["AAPL", "AMZN", "GOOG", "MSFT", "TSLA"]}')
+       read_data='{"currencies": ["USD", "EUR"], "stocks": ["AAPL", "AMZN", "GOOG", "MSFT", "TSLA"]}')
 def test_read_currencies_and_stocks_from_json(mocked) -> None:
     """ Тест на правильность возвращения кортежа из списка валют и акций. """
     assert read_currencies_and_stocks_from_json() == (
@@ -41,7 +41,7 @@ def test_read_currencies_and_stocks_from_json(mocked) -> None:
 
 
 # ТЕСТ PASSED
-@patch('builtins.open', new_callable=mock_open, read_data='')
+@patch('builtins.open', new_callable=mock_open, read_data='{}')
 def test_read_currencies_and_stocks_from_json_empty(mocked) -> None:
     """ Тест на пустой файл json. """
-    assert read_currencies_and_stocks_from_json() == ([], [])
+    assert read_currencies_and_stocks_from_json() == (None, None)
