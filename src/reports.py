@@ -79,3 +79,5 @@ def spending_by_category(transactions: pd.DataFrame, months: int, category: str,
     reports_logger.info("Запись файла categories_3_months.xlsx успешна.")
 
     return expences_sum
+
+

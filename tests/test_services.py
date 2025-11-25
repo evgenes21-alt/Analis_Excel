@@ -1,6 +1,6 @@
+
 from pathlib import Path
 from unittest.mock import MagicMock, patch
-
 import pandas as pd
 import pytest
 
@@ -9,15 +9,19 @@ from src.services import search_phones
 
 
 @pytest.fixture
-def mock_dataframe():
+def mock_dataframe() -> pd.DataFrame:
     """Тестовый DataFrame с полем 'Описание' и номерами телефонов."""
-    return pd.DataFrame(
-        {"Описание": ["Звоните: 995 555-55-55", "Контакт: 981 333-44-55", "Нет номера", "Ещё один: 921 111-22-33"]}
-    )
-
+    return pd.DataFrame({
+        "Описание": [
+            "Звоните: 995 555-55-55",
+            "Контакт: 981 333-44-55",
+            "Нет номера",
+            "Ещё один: 921 111-22-33"
+        ]
+    })
 
 @patch("pathlib.Path.exists")
-def test_search_phones_file_not_found(mock_exists):
+def test_search_phones_file_not_found(mock_exists: MagicMock) -> None:
     """Тест: файл не найден."""
     mock_exists.return_value = False
 

@@ -1,14 +1,16 @@
 import zipfile
 from pathlib import Path
+from typing import List, Dict, Any
 
 import pandas as pd
 import pytest
+from pandas import DataFrame
 
 tests_path = Path(__file__).parent
 
 
 @pytest.fixture
-def source_dataframe():
+def source_dataframe() -> pd.DataFrame:
     df = pd.read_excel(tests_path / "test_operations.xlsx")
     df["Сумма операции"] = df["Сумма операции"].astype(float)
     df["MCC"] = df["MCC"].astype(float)
@@ -18,7 +20,7 @@ def source_dataframe():
 
 
 @pytest.fixture
-def filtered_by_dates_df():
+def filtered_by_dates_df() -> DataFrame:
     df = pd.read_excel(tests_path / "expected_filtered_by_dates.xlsx")
     df["MCC"] = df["MCC"].astype(float)
     df["Сумма операции"] = df["Сумма операции"].astype(float)
@@ -30,12 +32,12 @@ def filtered_by_dates_df():
 
 
 @pytest.fixture
-def stocks_list():
+def stocks_list() -> List[str]:
     return ["AAPL", "AMZN"]
 
 
 @pytest.fixture
-def stocks_to_get():
+def stocks_to_get() -> List[Dict[str, Any]]:
     return [
         {"stock": "AAPL", "price": 150.12},
         {"stock": "AMZN", "price": 3173.18},
@@ -43,17 +45,17 @@ def stocks_to_get():
 
 
 @pytest.fixture
-def currencies_list():
+def currencies_list() -> List[str]:
     return ["USD", "EUR"]
 
 
 @pytest.fixture
-def currencies_to_get():
+def currencies_to_get()-> List[Dict[str, Any]]:
     return [{"currency": "USD", "rate": 73.21}, {"currency": "EUR", "rate": 87.08}]
 
 
 @pytest.fixture
-def top_5_expences():
+def top_5_expences()-> List[Dict[str, Any]]:
     return [
         {"amount": 146.0, "category": "Супермаркеты", "date": "06.10.2021", "description": "Колхоз"},
         {"amount": 146.0, "category": "Супермаркеты", "date": "04.10.2021", "description": "Колхоз"},
@@ -64,7 +66,7 @@ def top_5_expences():
 
 
 @pytest.fixture
-def cards_spent():
+def cards_spent() -> List[Dict[str, Any]]:
     return [
         {"last_digits": "5684", "total_spent": 245.0, "cashback": 2.45},
         {"last_digits": "7197", "total_spent": 475.0, "cashback": 4.75},
@@ -72,7 +74,7 @@ def cards_spent():
 
 
 @pytest.fixture
-def phones_found():
+def phones_found() -> List[str]:
     return [
         "995 555-55-55",
         "995 555-55-55",
@@ -102,16 +104,20 @@ def phones_found():
     ]
 
 
-@pytest.fixture
-def expected_fastfood():
-    df = pd.read_excel(tests_path / "expected_fastfood.xlsx").agg({"Сумма операции": "sum"}).astype(float)
-    return df
-
 
 @pytest.fixture
-def expected_supermarkets():
-    df = pd.read_excel(tests_path / "expected_supermarkets.xlsx").agg({"Сумма операции": "sum"}).astype(float)
-    return df
+def expected_fastfood() -> pd.Series:
+    df = pd.read_excel(tests_path / "expected_fastfood.xlsx")
+    result: pd.Series = df.agg({"Сумма операции": "sum"}).astype(float)
+    return result
+
+@pytest.fixture
+def expected_supermarkets() -> pd.Series:
+    df = pd.read_excel(tests_path / "expected_supermarkets.xlsx")
+    result: pd.Series = df.agg({"Сумма операции": "sum"}).astype(float)
+    return result
+
+
 
 
 " В conftest.py добавьте проверку (временно)"

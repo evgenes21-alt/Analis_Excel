@@ -22,28 +22,31 @@ def test_greeting(date_: datetime, greet: str) -> None:
     assert greeting(date_) == greet
 
 
-# ТЕСТ PASSED
-def test_filter_by_dates(source_dataframe: pd.DataFrame, filtered_by_dates_df: pd.DataFrame) -> None:
+from pandas import DataFrame
+
+def test_filter_by_dates(
+    source_dataframe: DataFrame,
+    filtered_by_dates_df: DataFrame
+) -> None:
     """Тест проверяет правильность выборки по диапазону дат."""
     start_date = datetime(2021, 10, 1, 0, 0, 0)
     current_date = datetime(2021, 10, 8, 8, 24, 0)
     expected = filtered_by_dates_df.to_dict(orient="records")
     assert filter_by_dates(source_dataframe, start_date, current_date) == expected
 
+from unittest.mock import MagicMock
 
-# ТЕСТ PASSED
 @patch(
     "builtins.open",
     new_callable=mock_open,
     read_data='{"currencies": ["USD", "EUR"], "stocks": ["AAPL", "AMZN", "GOOG", "MSFT", "TSLA"]}',
 )
-def test_read_currencies_and_stocks_from_json(mocked) -> None:
+def test_read_currencies_and_stocks_from_json(mocked: MagicMock) -> None:
     """Тест на правильность возвращения кортежа из списка валют и акций."""
     assert read_currencies_and_stocks_from_json() == (["USD", "EUR"], ["AAPL", "AMZN", "GOOG", "MSFT", "TSLA"])
 
 
-# ТЕСТ PASSED
 @patch("builtins.open", new_callable=mock_open, read_data="{}")
-def test_read_currencies_and_stocks_from_json_empty(mocked) -> None:
+def test_read_currencies_and_stocks_from_json_empty(mocked: MagicMock) -> None:
     """Тест на пустой файл json."""
     assert read_currencies_and_stocks_from_json() == (None, None)

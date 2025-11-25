@@ -70,34 +70,27 @@ def get_cards_and_expences_only(dict_: dict) -> tuple[list[Any], pd.DataFrame]:
     return cards, expences
 
 
-def filter_by_dates(transactions: pd.DataFrame, start_date: datetime, current_date: datetime) -> List:
+
+def filter_by_dates(
+    transactions: pd.DataFrame,
+    start_date: datetime,
+    current_date: datetime
+) -> list[dict[str, Any]]:
     """
-    Функция создает словарь от поступившего датафрейма
-    и выделяет диапазон в пределах от start_date и current_date.
-    Берутся только успешные транзакции (со статусом ОК).
+    Функция создаёт словарь из поступившего датафрейма и выделяет диапазон
+    в пределах от start_date и current_date. Берёт только успешные транзакции (статус ОК).
     """
-    # преобразовываем поле даты в формат даты pandas
     transactions["Дата операции"] = pd.to_datetime(transactions["Дата операции"], dayfirst=True)
-
-    # фильтруем по диапазону дат
-    filtered_by_dates_df = transactions[(transactions["Дата операции"].between(start_date, current_date))]
-
-    # берем только успешные транзакции
+    filtered_by_dates_df = transactions[transactions["Дата операции"].between(start_date, current_date)]
     filtered_by_dates_OK = filtered_by_dates_df[filtered_by_dates_df["Статус"] == "OK"]
-
-    # исключаем Nan поля в столбце "Номер карты"
     filtered_by_dates_OK_noNANs = filtered_by_dates_OK.dropna(subset=["Номер карты"])
-
-    # возвращаем поле даты обратно в строковый формат (далее нам понадобится именно строковое представление)
-    filtered_by_dates_OK_noNANs["Дата операции"] = filtered_by_dates_OK_noNANs["Дата операции"].dt.strftime(
-        "%d.%m.%Y %H:%M:%S"
-    )
-
-    # очищаем весь датафрейм от полей Nan, записываем туда нули. Иначе с тестами возникнут сложности
+    filtered_by_dates_OK_noNANs["Дата операции"] = filtered_by_dates_OK_noNANs["Дата операции"].dt.strftime("%d.%m.%Y %H:%M:%S")
     filtered_by_dates_OK_noNANs = filtered_by_dates_OK_noNANs.fillna(0)
 
-    # возвращаем датафрейм, преобразованный в список
-    return filtered_by_dates_OK_noNANs.to_dict(orient="records")
+    # Явное приведение типа
+    result: list[dict[str, Any]] = filtered_by_dates_OK_noNANs.to_dict(orient="records")
+    return result
+
 
 
 def read_currencies_and_stocks_from_json() -> tuple:

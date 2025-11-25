@@ -52,7 +52,7 @@ def app_main(current_date_str: str) -> str:
         print(f"Начало отчетного периода: {start_date_main}")
         print(f"Конец отчетного периода: {current_date}")
 
-        filtered_by_dates = filter_by_dates(transactions, start_date_main, current_date)
+        filtered_by_dates: list = filter_by_dates(transactions, start_date_main, current_date)
         greeting_message = greeting(current_date)
         cards_total_expences = cards_total_spent(filtered_by_dates)
         top_transactions = get_top_transactions(filtered_by_dates)
