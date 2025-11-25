@@ -77,7 +77,6 @@ if not services_logger.handlers:
     services_logger.addHandler(file_handler)
 
 
-
 def search_phones(transactions_path: str | Path, field_name: str, pattern: str) -> str:
     """
     Ищет телефонные номера в указанном поле Excel-файла.
@@ -108,7 +107,6 @@ def search_phones(transactions_path: str | Path, field_name: str, pattern: str) 
         services_logger.error("Столбец '%s' не найден в файле %s", field_name, file_path)
         raise ValueError(f"Столбец '{field_name}' не найден в файле")
 
-
     # Поиск номеров по шаблону
     found_numbers = []
     for value in df[field_name].dropna():
@@ -118,6 +116,4 @@ def search_phones(transactions_path: str | Path, field_name: str, pattern: str) 
     # Логирование результата
     services_logger.info("Найдено номеров: %d", len(found_numbers))
 
-
     return json.dumps({"found_phones": found_numbers}, ensure_ascii=False, indent=2)
-

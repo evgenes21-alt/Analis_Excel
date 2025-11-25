@@ -1,6 +1,6 @@
-import os
 import json
 import logging
+import os
 from datetime import datetime
 from pathlib import Path
 from typing import Any, List
@@ -23,6 +23,7 @@ utils_logger.addHandler(file_handler)
 utils_logger.setLevel(logging.INFO)
 
 results_path = BASE_DIR / "results"
+
 
 def greeting(date_: datetime) -> str:
     """

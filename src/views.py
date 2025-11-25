@@ -7,8 +7,8 @@ import pandas as pd
 
 from src.reports import spending_by_category
 from src.services import search_phones
-from src.utils import cards_total_spent, get_currency_rates, get_stock_prices, get_top_transactions
-from src.utils import filter_by_dates, greeting, read_currencies_and_stocks_from_json
+from src.utils import (cards_total_spent, filter_by_dates, get_currency_rates, get_stock_prices, get_top_transactions,
+                       greeting, read_currencies_and_stocks_from_json)
 
 BASE_DIR = Path(__file__).parent.parent
 views_logs_path = BASE_DIR / "logs/views.log"

@@ -7,6 +7,7 @@ from typing import Callable
 
 import pandas as pd
 from pandas import Series
+
 from src.utils import filter_by_dates
 
 BASE_DIR = str(Path(__file__).parent.parent)  # корневая папка проекта
@@ -37,7 +38,7 @@ def log_to_file(filename: str = "report_expences_by_category.json") -> Callable:
             result = {"Категория": args[2]}
             try:
                 result["Траты за 3 месяца:"] = (
-                        str(round(abs(func(*args, **kwargs).to_dict()["Сумма операции"]), 2)) + " руб."
+                    str(round(abs(func(*args, **kwargs).to_dict()["Сумма операции"]), 2)) + " руб."
                 )
             except Exception as err:
                 reports_logger.info("Что-то пошло не так при работе функции, ошибка: ", err)
