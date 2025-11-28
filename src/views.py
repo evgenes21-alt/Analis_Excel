@@ -1,161 +1,101 @@
 import json
 import logging
-import os
+from datetime import datetime
 from pathlib import Path
 
-import requests
+import pandas as pd
 
-from src.utils import get_cards_and_expences_only
+from src.reports import spending_by_category
+from src.services import search_phones
+from src.utils import (cards_total_spent, filter_by_dates, get_currency_rates, get_stock_prices, get_top_transactions,
+                       greeting, read_currencies_and_stocks_from_json)
 
-BASE_DIR = str(Path(__file__).parent.parent)  # корневая папка проекта
-views_logs_path = BASE_DIR + r'\logs\views.log'
-results_path = BASE_DIR + '\\results'
+BASE_DIR = Path(__file__).parent.parent
+views_logs_path = BASE_DIR / "logs/views.log"
+results_path = BASE_DIR / "results"
 
 # настраиваем параметры логирования
 views_logger = logging.getLogger("views")
 file_handler = logging.FileHandler(views_logs_path, "w", encoding="UTF-8")
-file_formatter = logging.Formatter('%(asctime)s-%(name)s-%(levelname)s: %(message)s')
+file_formatter = logging.Formatter("%(asctime)s-%(name)s-%(levelname)s: %(message)s")
 file_handler.setFormatter(file_formatter)
 views_logger.addHandler(file_handler)
 views_logger.setLevel(logging.INFO)
 
-
-def cards_total_spent(dict_: list) -> list[dict]:
-    """
-    Функция получает отфильтрованный словарь по датам
-    и возвращает список из словарей для всех карт, общую сумму расходов по каждой карте
-    за заданный период, а также сумму кэшбека
-    """
-
-    #  уникальные номера карт и датафрейм только по платежам, очищенный от отсутствующих номеров карт
-    cards, expences = get_cards_and_expences_only(dict_)
-    # print(get_cards_and_expences_only(dict_))
-
-    # собираем список транзакций, отдельно по каждой карте
-    cards_df = []
-    for card_ in cards:
-        cards_df.append(expences.loc[expences["Номер карты"] == card_])
-
-    # собираем общую сумму расходов по каждой карте
-    total_expences = []
-    for card in cards_df:
-        total_expences.append(card.agg({'Сумма операции': 'sum'}).to_dict())
-
-    # формируем список словарей, где ключами являются номер карты, общая сумма расходов, кэшбэк
-    cards_expences = []
-    for card_number, expence in zip(cards, total_expences):
-        exp_sum = round(abs(expence['Сумма операции']), 2)
-        cashback = round(abs(expence['Сумма операции']) / 100, 2)
-        cards_expences.append({'last_digits': card_number[-4:], 'total_spent': exp_sum,
-                               'cashback': cashback})
-
-    # Временный тестовый блок для проверки правильности работы функции.
-    # Выводит результат работы функции в отдельный json файл в папке logs текущего проекта
-    with open(results_path + r'\json_out.json', 'w', encoding='utf-8') as test_file:
-        json.dump(cards_expences, test_file, indent=4)
-        views_logger.info("файл json_out.json создан успешно")
-
-    return cards_expences
+transactions_path = BASE_DIR / "data"
+file_path = transactions_path / "operations.xlsx"
 
 
-def get_top_transactions(dict_: list) -> list[dict]:
-    """
-    Функция возвращает список словарей из 5 транзакций, по которым самая большая сумма платежей.
-    """
-    # нам нужен только второй элемент [1] возвращенного кортежа (только датафрейм)
-    expences = get_cards_and_expences_only(dict_)[1]
+def app_main(current_date_str: str) -> str:
 
-    # сортируем стоимости транзакций в порядке убывания
-    sorted_by_amount = expences.sort_values(by='Сумма операции', ascending=True)
+    print(f"Проверяем существование: {file_path}")
+    print(f"Файл существует: {file_path.exists()}")
 
-    # выводим в файл для проверки правильности сортировки (опционально)
-    # sorted_by_amount.to_excel(results_path + r'\sorted_by_amount.xlsx')
+    if not file_path.exists():
+        print(f"Директория {file_path.parent} существует: {file_path.parent.exists()}")
+        print(f"Содержимое директории {file_path.parent}:")
+        for item in file_path.parent.iterdir():
+            print(f"  {item.name}")
+        views_logger.error(f"Файл не найден: {file_path}")
+        raise FileNotFoundError(f"Файл не найден: {file_path}")
 
-    # выбираем первые 5 транзакций после сортировки по убыванию
-    top_5_expences = sorted_by_amount.iloc[:5]
+    print("\nЧитаю excel файл с транзакциями, может занять некоторое время...")
 
-    # выводим в файл для проверки правильности выборки (опционально)
-    # top_5_expences.to_excel(results_path + r'\top_5_expences.xlsx')
+    try:
+        transactions = pd.read_excel(file_path)
+        views_logger.info(f"Успешное чтение файла {file_path}")
 
-    # организуем список из топ 5 транзакций с дополнительными требуемыми полями
-    top_5_list = []
-    for index, transaction in top_5_expences.iterrows():
-        tr_date = transaction['Дата операции'][:10]  # берем только дату, время не требуется по тз
-        tr_amount = abs(transaction['Сумма операции'])  # по модулю числа
-        tr_category = transaction['Категория']
-        tr_descr = transaction['Описание']
-        top_5_list.append(
-            {
-                "date": tr_date,
-                "amount": tr_amount,
-                "category": tr_category,
-                "description": tr_descr
-            }
-        )
+        current_date = datetime.strptime(current_date_str, "%d.%m.%Y %H:%M:%S")
+        start_date_main = current_date.replace(day=1, hour=0, minute=0, second=0)
 
-    with open(results_path + r'\top_5_json.json', 'w', encoding='UTF-8') as test_file:
-        json.dump(top_5_list, test_file, ensure_ascii=False, indent=4)
-        views_logger.info("файл top_5_json.json создан успешно")
+        print("\nСтраница 'Главная'")
+        print(f"Начало отчетного периода: {start_date_main}")
+        print(f"Конец отчетного периода: {current_date}")
 
-    return top_5_list
+        filtered_by_dates: list = filter_by_dates(transactions, start_date_main, current_date)
+        greeting_message = greeting(current_date)
+        cards_total_expences = cards_total_spent(filtered_by_dates)
+        top_transactions = get_top_transactions(filtered_by_dates)
 
+        currencies, stocks = read_currencies_and_stocks_from_json()
+        currency_rates = get_currency_rates(currencies)
+        stock_prices = get_stock_prices(stocks)
 
-def get_currency_rates(curr_list: list[str]) -> list[dict]:
-    """
-    Функция получает список валют и возвращает их текущий курс.
-    """
-    API_KEY = os.getenv("API_KEY")
-    response_list = []
-    convert_to = 'RUB'
-    amount = 1
-    for currency in curr_list:
-        url = 'https://api.apilayer.com/exchangerates_data/convert'
-        response = requests.get(
-            f'{url}?to={convert_to}&from={currency}&amount={amount}&apikey={API_KEY}')
-        if response.status_code == 200:
-            # запрос успешный, можно распарсить ответ
-            response_list.append(
-                {
-                    "currency": currency,
-                    "rate": round(response.json()['info']['rate'], 2)
-                })
-        else:
-            print("\nЧто-то пошло не так с запросом на конвертацию валюты.")
-            views_logger.error("Что-то пошло не так с запросом на конвертацию валюты.")
-            response_list.append(
-                {
-                    "currency": currency,
-                    "rate": "N/A"
-                })
+        main_page = {
+            "greeting": greeting_message,
+            "cards": cards_total_expences,
+            "top_transactions": top_transactions,
+            "currency_rates": currency_rates,
+            "stock_prices": stock_prices,
+        }
 
-    return response_list
+        main_page_json = json.dumps(main_page, ensure_ascii=False, indent=4)
+        print("\nJSON ответ для главной страницы:")
+        print(main_page_json)
 
+        with open(results_path / "main_page.json", "w", encoding="UTF-8") as file_json:
+            file_json.write(main_page_json)
+            views_logger.info("файл main_page.json создан успешно")
 
-def get_stock_prices(stock_list: list[str]) -> list[dict]:
-    """
-    Функция получает список акций и возвращает их стоимость.
-    Используется API: http://api.marketstack.com/v1/eod?access_key={API_KEY_STOCK}&symbols={stock}.
-    Ответ возвращается в формате JSON.
-    В качестве стоимости акции берется ее стоимость на момент закрытия предыдущего дня (параметр 'close').
-    Чтобы получить актуальную цену акции на момент запроса, необходимо иметь платную подписку.
-    К сожалению, такой возможности нет. Надеюсь на понимание.
-    """
-    API_KEY_STOCK = os.getenv("API_KEY_STOCK")
+        field_to_search = "Описание"
+        regex_template = r"\d{3} \d{3}-\d{2}-\d{2}"
+        found_phones = search_phones(str(file_path), field_to_search, regex_template)
 
-    # тут будем собирать цены на акции
-    stocks_price = []
-    for stock in stock_list:
-        url = f'http://api.marketstack.com/v1/eod?access_key={API_KEY_STOCK}&symbols={stock}'
-        response = requests.get(url)
-        if response.status_code == 200:
-            # запрос успешный, можно распарсить ответ
-            stocks_price.append(
-                {
-                    "stock": stock,
-                    "price": response.json()['data'][0]['close']
-                })
-        else:
-            print('\nЧто-то пошло не так с запросом на получение цен акций.')
-            return []
+        with open(results_path / "services.json", "w", encoding="UTF-8") as file:
+            file.write(found_phones)
+            views_logger.info("файл services.json создан успешно")
 
-    return stocks_price
+        print("\nВывожу список транзакций, в которых в описании имеется телефонный номер\n")
+        print(found_phones)
+
+        category_name = "Супермаркеты"
+        months = 3
+        spent_by_categories = spending_by_category(transactions, months, category_name, current_date_str)
+        print("\nТраты по категориям:")
+        print(spent_by_categories)
+
+        return main_page_json
+
+    except Exception as e:
+        views_logger.error(f"Ошибка при обработке файла: {e}")
+        raise

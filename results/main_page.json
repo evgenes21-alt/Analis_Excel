@@ -52,15 +52,15 @@
     "currency_rates": [
         {
             "currency": "USD",
-            "rate": 80.87
+            "rate": 78.77
         },
         {
             "currency": "EUR",
-            "rate": 93.56
+            "rate": 90.81
         },
         {
             "currency": "GBP",
-            "rate": 106.42
+            "rate": 103.4
         }
     ],
     "stock_prices": []
