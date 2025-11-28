@@ -57,7 +57,7 @@ def log_to_file(filename: str = "report_expences_by_category.json") -> Callable:
 
 
 @log_to_file("category_expences.json")
-def spending_by_category(transactions: pd.DataFrame, months: int, category: str, date_: str) -> Series:
+def spending_by_category(transactions: pd.DataFrame, months: int, category: str, date_: str) -> str:
     """
     Функция принимает данные транзакций, категорию и исходную дату.
     Возвращается датафрейм, содержащий траты по заданной категории
@@ -78,6 +78,6 @@ def spending_by_category(transactions: pd.DataFrame, months: int, category: str,
     filtered_by_category.to_excel(results_path + r"\categories_3_months.xlsx")
     reports_logger.info("Запись файла categories_3_months.xlsx успешна.")
 
-    return expences_sum
+    return expences_sum.to_json()
 
 
