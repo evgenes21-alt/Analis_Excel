@@ -4,8 +4,8 @@ from pandas import DataFrame, Series
 from src.reports import spending_by_category
 
 def test_spending_by_category(
-    source_dataframe: DataFrame,
-    expected_fastfood: Series
+    source_dataframe: DataFrame
+
 ) -> None:
     """
     Тест на выборку из датафрейма, правильно подсчитывающий сумму расходов
@@ -13,12 +13,10 @@ def test_spending_by_category(
     Тестируется сама оригинальная функция без декоратора (метод __wrapped__)
     """
     date_input = "18.11.2021 21:15:27"
+    expected_reports = {"Категория": "Фастфуд", "Траты за 3 месяца:": "463.0 руб."}
 
-    # pd.testing.assert_series_equal(
-    #     spending_by_category.__wrapped__(source_dataframe, 3, "Фастфуд", date_input),
-    #     expected_fastfood
-    # )
-    assert spending_by_category(source_dataframe, 3, "Фастфуд", date_input) == {}
+
+    assert spending_by_category(source_dataframe, 3, "Фастфуд", date_input) == expected_reports
 
 def test_log_to_file(
     filtered_by_dates_df: DataFrame
